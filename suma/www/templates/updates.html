@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patch details for {{ host['hostname'].upper() }}</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #022252;
+            color: white;
+        }
+        .light-blue {
+            background-color: #b1cffc;
+        }
+        .noborder {
+            border: none
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+   <img src="/khc-logo.png" style="width:15%;height:15%;">
+    
+    <h1>Patch details for {{ host['hostname'].upper() }}</h1>
+
+    <h2>Network Addresses</hi></h2>
+    <table>
+      <tr>
+        <th>IP Address</th>
+        <th>Host Name</th>
+      </tr>
+      
+      <tr>
+        <td>{{ host['ip'] }}</td>
+        <td>{{ host['hostname'].lower() }}</td>
+      </tr>
+
+    </table>
+    
+    <h2>Required Patches</h2>
+    <table>
+        <tr>
+            <th>Advisory</th>
+            <th>Type</th>
+            <th>Synopsis</th>
+            <th>Release Date</th>
+            <th>Status</th>
+        </tr>
+        {% for patch in patches %}
+        
+        <tr style="{% if patch['advisory_type'] == 'Security Advisory' and patch['update_date'] < now %}background-color: #ffe6e6;{% endif %}">
+          <td>{{ patch['advisory_name'] }}</td>
+          <td>{{ patch['advisory_type'] }}</td>
+          <td>{{ patch['advisory_synopsis'] }}</td>
+          <td>{{ patch['update_date'] }}</td>
+          <td>{{ patch['advisory_status'] }}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+
+    <h2>Upgradable Packages</h2>
+    <table>
+        <tr>
+      		<th></th>
+      		<th colspan=2 style="text-align:center">Currently Installed</th>
+      		<th colspan=2 style="text-align:center">Pending Upgrade</th>
+      	</tr>
+        <tr>
+            <th>Package Name</th>
+            <th>Version</th>
+            <th>Release</th>
+            <th>Version</th>
+            <th>Release</th>
+        </tr>
+        {% for package in packages %}
+        <tr>
+            <td>{{ package['name'] }}</td>
+            <td>{{ package['from_version'] }}</td>
+            <td>{{ package['from_release'] }}</td>
+            <td class="light-blue">{{ package['to_version'] }}</td>
+            <td class="light-blue">{{ package['to_release'] }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    <br>
+    <button onclick="window.history.back()" style="background-color: #022252; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px;">Previous Page</button>
+</body>
+</html>
+

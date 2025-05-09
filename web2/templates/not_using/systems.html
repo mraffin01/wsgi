@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+ <html>
+<head>
+    <title>Active Systems</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Active Systems</h1>
+
+    <table>
+        <tr>
+            <th>System Name</th>
+            <th>Required Patches</th>
+            <th>Required Packages</th>
+            <th>Last Checkin</th>
+            <th>Last Reboot</th>
+        </tr>
+        {% for system in active_systems %}
+        <tr>      
+      	    <td><a href=updates/{{ system['id'] }}>{{ system['name'].lower() }}</a></td>
+            <td style="text-align:center">{{ system['patches_needed'] }}</td>
+            <td style="text-align:center">{{ system['packages_needed'] }}</td>
+            <td>{{ system['last_checkin'] }}</td>
+            <td>{{ system['last_boot'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Inactive Systems</h2>
+    <table>
+        <tr>
+            <th>System Name</th>
+            <th>Last Checkin</th>
+            <th>Last Reboot</th>
+        </tr>
+        {% for system in inactive_systems %}
+        <tr>      
+      	    <td>{{ system['name'].lower() }}</td>
+            <td>{{ system['last_checkin'] }}</td>
+            <td>{{ system['last_boot'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+

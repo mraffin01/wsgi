@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<script>
+    window.onload = function() {
+        // Make an AJAX request to the backend to process something
+        fetch('/process')
+            .then(response => response.json())
+            .then(data => {
+                // Once the backend processing is complete, hide the splash screen
+                document.getElementById('splashScreen').style.display = 'none';
+                document.getElementById('content').classList.remove('hidden');
+            });
+    };
+</script>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing...</title>
+    <style>
+        /* Style for the splash screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            z-index: 9999;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash screen content -->
+    <div id="splashScreen">Processing... Please wait.</div>
+
+    <!-- Content that will appear after processing -->
+    <div id="content" class="hidden">
+        <h1>Process Complete!</h1>
+        <p>Your request has been processed successfully.</p>
+    </div>
+
+    <script>
+        // Simulate background processing (you can replace this with actual AJAX call to backend)
+        setTimeout(function() {
+            // Hide splash screen
+            document.getElementById('splashScreen').style.display = 'none';
+            // Show the content
+            document.getElementById('content').classList.remove('hidden');
+        }, 5000);  // Simulate a 5-second delay (you can adjust this as per your processing time)
+    </script>
+</body>
+</html>

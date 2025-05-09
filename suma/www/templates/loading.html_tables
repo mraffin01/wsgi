@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systems Loading</title>
+    <style>
+        /* Splash screen styling */
+        #loading {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #content {
+            display: none;
+        }
+        /* Spinner animation */
+        .spinner {
+            border: 6px solid #f3f3f3; /* Light grey */
+            border-top: 6px solid #FF3300; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            /* width: 100%; */
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Loading systems data, please wait...</div>
+    </div>
+    <div id="content"></div>
+
+    <script>
+        // Fetch systems data and render dynamically
+        fetch('systems/data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                const contentDiv = document.getElementById('content');
+                contentDiv.style.display = 'block';
+
+                // Render active systems table
+                const activeSystemsTable = `
+                    <h1>Active Systems</h1>
+                    <table>
+                        <tr>
+                            <th>System Name</th>
+                            <th>Required Patches</th>
+                            <th>Required Packages</th>
+                            <th>Last Checkin</th>
+                            <th>Last Reboot</th>
+                        </tr>
+                        ${data.active_systems.map(system => `
+                        <tr>
+                            <td><a href="updates/${system.id}">${system.name.toLowerCase()}</a></td>
+                            <td style="text-align:center">${system.patches_needed}</td>
+                            <td style="text-align:center">${system.packages_needed}</td>
+                            <td>${system.last_checkin}</td>
+                            <td>${system.last_boot}</td>
+                        </tr>
+                        `).join('')}
+                    </table>
+                `;
+
+                // Render inactive systems
+                const inactiveSystems = `
+                    <h1>Inactive Systems</h1>
+                    <table>
+                        <tr>
+                            <th>System Name</th>
+                            <th>Last Checkin</th>
+                            <th>Last Reboot</th>
+                        </tr>
+                        ${data.inactive_systems.map(system => `
+                        <tr>
+                            <td>${system.name.toLowerCase()}</td>
+                            <td>${system.last_checkin}</td>
+                            <td>${system.last_boot}</td>
+                        </tr>
+                        `).join('')}
+                    </table>
+                `;
+
+                // Inject content into the contentDiv
+                contentDiv.innerHTML = activeSystemsTable + inactiveSystems;
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('loading').innerText = "An error occurred while loading data.";
+            });
+    </script>
+</body>
+</html>

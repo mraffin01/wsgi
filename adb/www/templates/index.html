@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lookup Beyond Trust - User and Group Membership</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 0px solid #ddd;
+      text-align: left;
+      padding: 4px;
+    }
+    th {
+      background-color: #dedede;
+      text-align: center;
+      font-weight: bold;
+    }
+    td {
+      vertical-align: top;
+      word-wrap: break-word;
+    }
+    .group-table, .server-table {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .group-table td {
+      width: 33%;  /* Each of the 3 columns takes 33% of the table's width */
+    }
+    .server-table td {
+      width: 20%;
+    }
+    /* Hide collapsible sections by default */
+    .toggle-section {
+      display: none;
+    }
+    /* Style for toggle links */
+    .toggle-link {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    
+    .list-item::before {
+      content: "* ";
+      color: #000; /* Bullet color */
+      margin-right: 4px;
+    }
+  </style>
+  <script>
+    // Toggle visibility of a section by its ID and change the link text accordingly
+    function toggleSection(sectionId, linkId) {
+      var section = document.getElementById(sectionId);
+      var link = document.getElementById(linkId);
+      if (section.style.display === "none" || section.style.display === "") {
+        section.style.display = "block";
+        link.innerHTML = "Hide";
+      } else {
+        section.style.display = "none";
+        link.innerHTML = "Show";
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Lookup Beyond Trust - User and Group Membership</h1>
+
+  {% if error %}
+    <p style="color:red;">Error: {{ error }}</p>
+  {% endif %}
+
+  <form method="post">
+    <label for="user">Enter user ID:</label>
+    <input type="text" id="user" name="user" placeholder="Enter A-ID" value="{{ user }}">
+    <input type="submit" value="Search">
+  </form>
+  {% if groups %}
+  {% if user %}
+    <h2>User Groups ({{ groups | length }})</h2>
+    <!-- Toggle link for groups -->
+
+    <div id="groupsSection" >
+      <table class="group-table">
+        <!-- Header row: 3 columns, each 33% wide -->
+        <tr>
+        </tr>
+        {% for row in groups | batch(3, '') %}
+        <tr>
+          {% for group in row %}
+          <td>
+            {% if group %}
+              <span class="list-item">{{ group.upper() }}</span>
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+
+
+  <h2>Servers by AD Groups - <span id="toggleGroupedServersLink" class="toggle-link" onclick="toggleSection('groupedServersSection', 'toggleGroupedServersLink')">Show</span></h2>
+  <!-- Toggle link for grouped servers -->
+  
+  <div id="groupedServersSection" class="toggle-section">
+    {% for group, servers in group_servers.items() %}
+      <table class="server-table">
+        <tr>
+          <th colspan="5" style="text-align:center;">Group: {{ group }}</th>
+        </tr>
+        {% set rows = servers | batch(5, '') %}
+        {% for row in rows %}
+          <tr>
+            {% for server in row %}
+              <td>
+                {% if server %}
+                  <span class="list-item">{{ server.upper() }}</span>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    {% endfor %}
+  </div>
+
+  <h2>All Linux Servers with Access ({{ servers | length }}) - <span id="toggleFlatServersLink" class="toggle-link" onclick="toggleSection('flatServersSection', 'toggleFlatServersLink')">Show</span></h2>
+  <!-- Toggle link for flat list of servers -->
+  
+  <div id="flatServersSection" class="toggle-section">
+    <table class="server-table">
+      <tr>
+        {% for i in range(num_columns) %}
+          <th>&nbsp;</th>
+        {% endfor %}
+      </tr>
+      {% for row in split_servers %}
+        <tr>
+          {% for server in row %}
+            <td>
+              {% if server %}
+                <span class="list-item">{{ server.upper() }}</span>
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHC - SUSE Manager Required Patch Lookup</title>
+    
+    <!-- Include jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    
+    <!-- Include the Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Splash screen styling */
+        #loading {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #content {
+            display: none;
+        }
+        /* Spinner animation */
+        .spinner {
+            border: 6px solid #f3f3f3; /* Light grey */
+            border-top: 6px solid #FF3300; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #022252;
+            color: white;
+        }
+        .light-blue {
+            background-color: #b1cffc;
+        }
+        .noborder {
+            border: none;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <img src="/khc-logo.png" style="width:15%;height:15%;">
+    
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Loading systems data, please wait...</div>
+    </div>
+    <div id="content"></div>
+
+    <!-- Include the Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+        function selectOption() {
+            const selectedUrl = selectedSystem.value;
+            if (selectedUrl) {
+                window.location.href = selectedUrl;  // Redirect to the selected URL
+            }
+        }
+
+        // Fetch systems data and render dynamically
+        fetch('systems/data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                const contentDiv = document.getElementById('content');
+                contentDiv.style.display = 'block';
+
+                // Render active systems table
+                const activeSystemsTable = `
+                    <h1>SUSE Manager Active Clients</h1>
+                    <table class="noborder">
+                        <tr class="noborder">
+                            <td class="noborder">
+                                <select id="selectedSystem" name="dropdown">
+                                    <option value="" SELECTED></option>
+                                    ${data.active_systems.map(system => `
+                                        <option value="updates/${system.id}">${system.name.toLowerCase()}</option>
+                                    `).join('')}
+                                </select>
+                            </td>
+                            <td class="noborder">
+                                <button style="background-color: #022252; color: white; cursor: pointer; border-radius: 5px;" onclick="selectOption()">Lookup Patching Details</button>
+                            </td>
+                        </tr>
+                    </table>
+                `;
+
+                // Render inactive systems
+                const inactiveSystems = `
+                    <h1>SUSE Manager Inactive Systems</h1>
+                    <table>
+                        <tr>
+                            <th>System Name</th>
+                            <th>Last Checkin</th>
+                            <th>Last Reboot</th>
+                        </tr>
+                        ${data.inactive_systems.map(system => `
+                        <tr>
+                            <td>${system.name.toLowerCase()}</td>
+                            <td>${system.last_checkin}</td>
+                            <td>${system.last_boot}</td>
+                        </tr>
+                        `).join('')}
+                    </table>
+                `;
+
+                // Inject content into the contentDiv
+                contentDiv.innerHTML = activeSystemsTable + inactiveSystems;
+
+                // Initialize Select2 for the dropdown
+                $(document).ready(function() {
+                    $('#selectedSystem').select2();
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('loading').innerText = "An error occurred while loading data.";
+            });
+    </script>
+</body>
+</html>

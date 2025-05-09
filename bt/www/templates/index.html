@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server BeyondTrust ADB Group Lookup</title>
+    <style>
+        .columns {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Server and Group Lookup</h1>
+
+    <!-- Server Lookup Form -->
+    <form action="" method="post">
+        <label for="server_name">Enter Server Name:</label>
+        <input type="text" id="server_name" name="server_name" required>
+        <button type="submit">Lookup Server Groups</button>
+    </form>
+
+    <!-- Error Messages -->
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Server Groups Display -->
+    {% if server_name and groups %}
+        <h2>Server: {{ server_name }}</h2>
+        <h3>CI Groups:</h3>
+        <ul>
+          {% for group in groups %}
+            <li>
+              {{ group }}
+            </li>
+          {% endfor %}
+        </ul>
+        <h3>User Access Groups:</h3>
+        <ul>
+            {% for group in groups %}
+                <!-- Add link for group member lookup -->
+                <li>
+                    {{ group }}_Admins - <a href="group_members?group_name={{ group }}_Admins">View Members</a>
+                </li>
+                <li>
+                    {{ group }}_Users - <a href="group_members?group_name={{ group }}_Users">View Members</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- Group Members Display -->
+    {% if group_name and members %}
+        <h2>Group: {{ group_name }}</h2>
+        <h3>Members:</h3>
+        <div class="columns">
+            {% set column_size = (members | length) // 4 + 1 %}
+            {% for i in range(4) %}
+                <div class="column">
+                    <ul>
+                        {% for member in members[i * column_size:(i + 1) * column_size] %}
+                            <li>{{ member }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Add a "Go Back" button -->
+        <button onclick="window.history.back()">Go Back</button>
+    {% endif %}
+</body>
+</html>

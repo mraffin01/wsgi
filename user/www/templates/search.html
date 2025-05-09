@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LDAP User Lookup</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        form { margin-bottom: 20px; }
+        .error { color: red; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>LDAP User Lookup</h1>
+    
+    <form method="POST" action="lookup_user">
+        <label for="search_field">Search by:</label>
+        <select name="search_field" id="search_field">
+            <option value="sAMAccountName" SELECTED>Username</option>
+            <option value="mail">Email</option>
+            <option value="cn">Common Name (CN)</option>
+            <option value="uid">UNIX Id</option>
+            <option value="displayName">Display Name</option>
+        </select>
+
+        <input type="text" name="search_value" placeholder="Enter search value" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        <h2>Search Results</h2>
+	<table>
+    <thead>
+        <tr>
+            <th>CN</th>
+            <th>Member Of</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in results %}
+        <tr valign=top>
+            <td width= 20%>
+              <table> 
+                <tr>
+                  <th width=35>CN</th> 
+                  <td>{{ entry.get("cn", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>sAMAccountName</th>
+                  <td >{{ entry.get("sAMAccountName", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>DisplayName</th>
+                  <td>{{ entry.get("displayName", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>Email</th>
+                  <td>
+                    {% if entry.mail %}
+                      <a href="mailto:{{ entry.mail if entry.mail}}">{{ entry.get("mail", "N/A") }}</a>
+                    {% else %}
+                      {{ entry.get("mail", "N/A") }}
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <th>UNIX ID</th>
+                  <td>{{ entry.get("uid", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>UNIX UID</th>
+                  <td>{{ entry.get("uidNumber", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>UNIX GID</th>
+                  <td>{{ entry.get("gidNumber", "N/A") }}</td>
+                </tr>
+		            <tr>
+                  <th>Created</th>
+                  <td>{{ entry.get("whenCreated", "N/A") }}</td>
+                </tr>
+		            <tr>
+                  <th>Updated</th>
+                  <td>{{ entry.get("whenChanged", "N/A") }}</td>
+                </tr>
+		            <tr>
+                  <th>Password Set</th>
+                  <td>{{ entry.get("pwdLastSet", "N/A") }}</td>
+                </tr>
+		            <tr>
+                  <th>Last Logon</th>
+                  <td>{{ entry.get("lastLogon", "N/A") }}</td>
+                </tr>
+
+              </table>
+            </td>
+            <td width=80%>
+		    {% if entry.memberOf %}
+    {% set num_cols = (entry.memberOf|length // 40) + (1 if entry.memberOf|length % 40 else 0) %}
+    {% set chunk_size = (entry.memberOf|length // num_cols) + 1 %}
+
+    <table>
+        <tr>
+            {% for col in range(num_cols) %}
+                <td valign="top">
+                    <ul>
+                        {% for group in entry.memberOf[col*chunk_size : (col+1)*chunk_size] %}
+                            <li>{{ group }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+{% else %}
+    <p>N/A</p>
+{% endif %}
+
+	    </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    {% endif %}
+</body>
+</html>
+
