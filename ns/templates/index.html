@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ping and nslookup Details</title>
+</head>
+<body>
+  <table>
+    <tr><td colspan=3><img src="/khc-logo.png" style="width:15%;height:15%;"></td></tr>
+    <tr><td width=5%></td><td>
+        <h1>Ping and nslookup Tool</h1>
+        <form method="post">
+          <label for="server_name">Enter Fully Qualified Server Name or IP Address:</label>
+          <input type="text" id="server_name" name="server_name" value="{{ server_name }}" required>
+          <input type="submit" value="Submit">
+        </form>
+        {% if error %}
+            <p><font color="red">{{ error }}</font></p>
+        {% endif %}
+    </td><td></td></tr>
+
+    {% if server_name %}
+    <tr><td></td><td>
+        <h1>Ping and nslookup Details for {{ server_name }}</h1>
+        <h2>NSLookup Result:</h2><pre>{{ nslookup_result }}</pre>
+        <h2>Ping Result:</h2><pre>{{ ping_result }}</pre>
+    </td><td></td></tr>
+    {% endif %}
+  </table>
+</body>
+<address>
+  <table>
+    <tr><td width=5%></td><td>Source region: Azure East US 2</td><td></td></tr>
+    <tr><td width=5%></td><td>Source server: EUS2DAPRAF001.mykft.net </td><td></td></tr>
+    <tr><td></td><td>Source IP Address: 10.12.24.6</td><td></td></tr>
+  </table>
+</address>
+</html>
