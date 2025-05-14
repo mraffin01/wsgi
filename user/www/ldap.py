@@ -5,7 +5,8 @@ import re
 app = Flask(__name__)
 
 # LDAP server details
-LDAP_SERVER = "ldaps://ldaps-eus2.mykft.net"
+#LDAP_SERVER = "ldaps://ldaps-eus2.mykft.net"
+LDAP_SERVER = "ldaps://eus2papgc003.mykft.net"
 SEARCH_BASE = "DC=MYKFT,DC=NET"
 LDAP_USER = "CN=JSE2367,OU=Contractors,OU=Users,OU=Grocery,DC=MYKFT,DC=NET"
 LDAP_PASSWORD = "ahZbpfLfn9U!Xn4mgmZ4"
@@ -48,7 +49,7 @@ def ldap_search_by_field(field, value):
             search_base= SEARCH_BASE,  # More targeted search base
             search_filter=search_filter,
             search_scope=SUBTREE,
-            attributes=['cn', 'displayName', 'sn', 'mail', 'sAMAccountName', 'distinguishedName', 'uid', 'uidnumber', 'gidnumber', 'memberOf', 'whenCreated','whenChanged',"pwdLastSet", "lastLogon" ]
+            attributes=['cn', 'displayName', 'sn', 'mail', 'sAMAccountName', 'distinguishedName', 'uid', 'uidnumber', 'gidnumber', 'memberOf', 'whenCreated','whenChanged',"pwdLastSet", "lastLogon","userPrincipalName" ]
             
         )
 

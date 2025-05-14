@@ -22,12 +22,13 @@
         <select name="search_field" id="search_field">
             <option value="sAMAccountName" SELECTED>Username</option>
             <option value="mail">Email</option>
+            <option value="userPrincipalName">User Principal</option>    
             <option value="cn">Common Name (CN)</option>
             <option value="uid">UNIX Id</option>
-            <option value="displayName">Display Name</option>
+            <option value="displayName">Display Name</option>     
         </select>
 
-        <input type="text" name="search_value" placeholder="Enter search value" required>
+        <input type="text" name="search_value" size=50 placeholder="Enter search value" required>
         <button type="submit">Search</button>
     </form>
 
@@ -82,6 +83,14 @@
                 <tr>
                   <th>UNIX GID</th>
                   <td>{{ entry.get("gidNumber", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>e-mail Address</th>
+                  <td>{{ entry.get("mail", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>UPN</th>
+                  <td>{{ entry.get("userPrincipalName", "N/A") }}</td>
                 </tr>
 		            <tr>
                   <th>Created</th>
