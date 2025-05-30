@@ -49,7 +49,7 @@ def ldap_search_by_field(field, value):
             search_base= SEARCH_BASE,  # More targeted search base
             search_filter=search_filter,
             search_scope=SUBTREE,
-            attributes=['cn', 'displayName', 'sn', 'mail', 'sAMAccountName', 'distinguishedName', 'uid', 'uidnumber', 'gidnumber', 'memberOf', 'whenCreated','whenChanged',"pwdLastSet", "lastLogon","userPrincipalName" ]
+            attributes=['cn', 'displayName', 'sn', 'mail', 'sAMAccountName', 'distinguishedName', 'uid', 'uidnumber', 'gidnumber', 'memberOf', 'whenCreated','whenChanged',"pwdLastSet", "lastLogon","userPrincipalName", 'manager', 'department','physicalDeliveryOfficeName' ]
             
         )
 

@@ -18,7 +18,7 @@ tls_config = Tls(validate=ssl.CERT_NONE)
 def get_user_groups(conn, user_id):
     conn.search(
         BASE_DN,
-        f"(samaccountname={user_id})",
+        f"(uid={user_id})",
         attributes=["memberOf"]
     )
     if not conn.entries:
