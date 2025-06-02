@@ -22,12 +22,13 @@
         <select name="search_field" id="search_field">
             <option value="sAMAccountName" SELECTED>Username</option>
             <option value="mail">Email</option>
+            <option value="userPrincipalName">User Principal</option>    
             <option value="cn">Common Name (CN)</option>
             <option value="uid">UNIX Id</option>
-            <option value="displayName">Display Name</option>
+            <option value="displayName">Display Name</option>     
         </select>
 
-        <input type="text" name="search_value" placeholder="Enter search value" required>
+        <input type="text" name="search_value" size=50 placeholder="Enter search value" required>
         <button type="submit">Search</button>
     </form>
 
@@ -83,6 +84,22 @@
                   <th>UNIX GID</th>
                   <td>{{ entry.get("gidNumber", "N/A") }}</td>
                 </tr>
+                <tr>
+                  <th>Location</th>
+                  <td>{{ entry.get("physicalDeliveryOfficeName", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>manager</th>
+                  <td>{{ entry.get("manager", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>e-mail Address</th>
+                  <td>{{ entry.get("mail", "N/A") }}</td>
+                </tr>
+                <tr>
+                  <th>UPN</th>
+                  <td>{{ entry.get("userPrincipalName", "N/A") }}</td>
+                </tr>
 		            <tr>
                   <th>Created</th>
                   <td>{{ entry.get("whenCreated", "N/A") }}</td>
@@ -99,7 +116,10 @@
                   <th>Last Logon</th>
                   <td>{{ entry.get("lastLogon", "N/A") }}</td>
                 </tr>
-
+		            <tr>
+                  <th>Last Logon Timestamp</th>
+                  <td>{{ entry.get("lastLogonTimestamp", "N/A") }}</td>
+                </tr>
               </table>
             </td>
             <td width=80%>
