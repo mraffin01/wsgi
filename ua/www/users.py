@@ -119,9 +119,10 @@ def index():
             last_name = request.form['last_name']
             email = request.form['email']
             vendor = request.form['vendor']
+            servername = request.form['server']
             
             try:
-                add_user(login, first_name, last_name, email, vendor)
+                add_user(login, first_name, last_name, email, vendor, servername)
                 flash(f"User {login} successfully added!")
             except Exception as e:
                 flash(f"Error adding user {login}: {e}")
@@ -146,14 +147,17 @@ def add_users_from_file(filepath):
                 last_name = row["last_name"]
                 email = row["email"]
                 vendor = row['vendor']
+                servername = row['servername']
 
-                add_user(login, first_name, last_name, email,vendor)
+                add_user(login, first_name, last_name, email,vendor,servername)
     finally:
         client.auth.logout(session_key)
 
-def add_user(login, first_name, last_name, email, vendor):
+def add_user(login, first_name, last_name, email, vendor, servername):
+    print (f"[servername]")
+
     """Add a single user to SUSE Manager."""
-    client = xmlrpc.client.ServerProxy(config['SUMA_API_URL'], allow_none=True)
+    client = xmlrpc.client.ServerProxy(f"https://{servername}/rpc/api", allow_none=True)
     session_key = client.auth.login(config['USERNAME'], decrypt_password())
     try:
         # Create user account 
@@ -163,13 +167,13 @@ def add_user(login, first_name, last_name, email, vendor):
         # Add role
         client.user.addRole(session_key, login, "system_group_admin")
         # Add systems group 
-        add_groups (login, vendor)
+        add_groups (login, vendor, servername)
     finally:
         client.auth.logout(session_key)
 
-def add_groups (login, vendor):
+def add_groups (login, vendor, servername):
     """Add groups to user."""
-    client = xmlrpc.client.ServerProxy(config['SUMA_API_URL'], allow_none=True)
+    client = xmlrpc.client.ServerProxy(f"https://{servername}/rpc/api", allow_none=True)
     session_key = client.auth.login(config['USERNAME'], decrypt_password())
     try:
         if vendor == "dxc":
